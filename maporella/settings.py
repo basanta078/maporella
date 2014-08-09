@@ -37,7 +37,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
-    'app'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -52,6 +51,12 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'maporella.urls'
 
 WSGI_APPLICATION = 'maporella.wsgi.application'
+
+SETTINGS_PATH = os.path.dirname(__file__)
+
+TEMPLATE_DIRS = (
+    os.path.join(SETTINGS_PATH, '../app/pages'),
+)
 
 
 # Database
