@@ -2,15 +2,81 @@
 <head>
 	<style>
 	</style>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	
 	<script>
-
+	var stops = [];
 	window.onload = function () {
-		alert("HEY");
+		getLocation();
+		}
+
+	function getLocation() {
+	    if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(showPosition);
+	    } 
 	}
 
+	function showPosition(position) {
+
+		$.get(
+		    "http://localhost:8000/",
+		    {paramOne : 1, paramX : 'abc'},
+		    function(data) {
+		       alert('page content: ' + data);
+		    }
+		);
+				var map = L.map('map').setView([position.coords.latitude, position.coords.longitude], 13);
+		//var map = L.map('map').setView([39.74739, -105], 13);
+
+		// add an OpenStreetMap tile layer
+		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+		    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+		}).addTo(map);
+
+		L.marker([39.956706, -75.164457]).addTo(map).bindPopup('Stop 1 <br> 15th and Race');
+		stops.push([39.956706, -75.164457]);
+		L.marker([39.955843, -75.189458]).addTo(map).bindPopup('Stop 2 <br> 33rd and Market');
+		stops.push([39.955843, -75.189458]);
+
+		stops.push([39.954175, -75.176641]);
+		var linepoints = [
+			[39.955843, -75.189458], 
+			[39.954175, -75.176641], 
+			[39.956706, -75.164457]
+		];	
+		var line = L.polyline(linepoints).addTo(map);
+
+		line.on('mouseover', function(e){
+			line.setStyle({color : "#f00"});
+		});
+
+		line.on('mouseout', function(e){
+			line.setStyle({color : "#03f"});
+		});
+		line.on('click', function(e) {
+		    stops.push([e.latlng.lat, e.latlng.lng]);
+		    stops.sort();
+		    L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+		});
+
+
+
+
+	}
+
+
+	
+	
 	</script>
+	
+	
+	
+
 </head>
 <body>
 	HELLO WORLD!
+	<div id="map" style="height:500px"></div>
 </body>
 </html>
