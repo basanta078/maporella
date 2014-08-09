@@ -29,8 +29,18 @@ def networks(request):
 @csrf_exempt
 def routes(request):
 	if request.method == 'POST':
-		pass
+		data = simplejson.loads(request.body)
+		geomStr = ""
+		for latlng in data.get('geom'):
+			geomStr += str(latlng[0]) + " " + str(latlng[1]) + ", "
+		geomStr = geomStr[:-2]
+		print geomStr
+		route = Route(name=data.get('name'), description=data.get('description'), geom=fromstr('MULTILINESTRING(({0}))'.format(geomStr)))
+		route.network_id = data.get('network')
+		route.save()
+		return HttpResponse("OK")	
 	else:
-		network_id = request.GET.get('network_id')
-		pass
-	return HttpResponse("OK")
+		net_id = request.GET.get('network_id')
+		routes = Route.objects.filter(network_id=net_id)
+		data = serializers.serialize("json", routes)
+		return HttpResponse(data, content_type="application/json")
